@@ -1,16 +1,16 @@
 import { MoreHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
+import { useContextSelector } from 'use-context-selector'
 
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { Movement } from '@/contexts/MovementsContext'
+import { Movement, MovementsContext } from '@/contexts/MovementsContext'
 import { formatDate } from '@/utils/formtDate'
 
 interface MovementTableRowProps {
@@ -18,6 +18,13 @@ interface MovementTableRowProps {
 }
 
 export function MovementTableRow({ movement }: MovementTableRowProps) {
+  const { editMovement, deleteMovement } = useContextSelector(
+    MovementsContext,
+    (context) => {
+      return context
+    },
+  )
+
   const createdAt = new Date(movement.createdAt)
   const formattedCreatedAt = formatDate(createdAt)
 
@@ -53,18 +60,21 @@ export function MovementTableRow({ movement }: MovementTableRowProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="left">
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText('id')}
-            >
-              Copiar o ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {}}>Editar</DropdownMenuItem>
-            <DropdownMenuItem
+              disabled={!!movement.harvestedAt}
               onClick={() =>
-                toast.success(
-                  `Usuário deletado com sucesso, CLIQUE PARA CANCELAR`,
-                )
+                editMovement({
+                  ...movement,
+                  harvestedAt: new Date().toLocaleString(),
+                })
               }
+            >
+              Colher
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                deleteMovement(movement.id!)
+                toast.success(`Movimentação deletada com sucesso`)
+              }}
               className="focus:bg-red-100 focus:text-red-900"
             >
               Deletar

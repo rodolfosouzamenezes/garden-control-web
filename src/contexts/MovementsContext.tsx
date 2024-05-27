@@ -26,6 +26,8 @@ interface MovementContextType {
   movements: Movement[]
   fetchMovements: (query?: string) => Promise<void>
   createMovement: (data: CreateMovementInput) => Promise<void>
+  editMovement: (data: Movement) => Promise<void>
+  deleteMovement: (id: string) => Promise<void>
 }
 
 interface MovementsProviderProps {
@@ -66,6 +68,24 @@ export function MovementsProvider({ children }: MovementsProviderProps) {
     setMovements((state) => [response.data, ...state])
   }, [])
 
+  const editMovement = useCallback(async (movement: Movement) => {
+    const response = await api.put(`movements/${movement.id}`, {
+      ...movement,
+      harvestedAt: new Date(movement.harvestedAt!),
+    })
+
+    setMovements((state) => [
+      response.data,
+      ...state.filter((s) => s.id !== movement.id),
+    ])
+  }, [])
+
+  const deleteMovement = useCallback(async (id: string) => {
+    await api.delete(`movements/${id}`)
+
+    setMovements((state) => [...state.filter((s) => s.id !== id)])
+  }, [])
+
   useEffect(() => {
     fetchMovements()
   }, [fetchMovements])
@@ -76,6 +96,8 @@ export function MovementsProvider({ children }: MovementsProviderProps) {
         movements,
         fetchMovements,
         createMovement,
+        deleteMovement,
+        editMovement,
       }}
     >
       {children}
