@@ -10,17 +10,39 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
+import { Movement } from '@/contexts/MovementsContext'
+import { formatDate } from '@/utils/formtDate'
 
-// interface OrderTableRowProps {}
+interface MovementTableRowProps {
+  movement: Movement
+}
 
-export function MovementTableRow() {
+export function MovementTableRow({ movement }: MovementTableRowProps) {
+  const createdAt = new Date(movement.createdAt)
+  const formattedCreatedAt = formatDate(createdAt)
+
+  const harvestDate = createdAt
+  harvestDate.setDate(createdAt.getDate() + movement.daysToHarvest)
+  const formattedHarvestDate = formatDate(harvestDate)
+
+  const harvestedAt = movement.harvestedAt
+    ? new Date(movement.harvestedAt)
+    : null
+  const formattedHarvestedAt = harvestedAt ? formatDate(harvestedAt) : '-'
+
   return (
     <TableRow>
-      <TableCell className="font-medium">Tomate</TableCell>
-      <TableCell className="font-medium">Rodolfo Souza Menezes</TableCell>
-      <TableCell className="text-muted-foreground">09/09/2024</TableCell>
-      <TableCell className="text-muted-foreground">09/09/2024</TableCell>
-      <TableCell className="text-muted-foreground">09/09/2024</TableCell>
+      <TableCell className="font-medium">{movement.plant}</TableCell>
+      <TableCell className="font-medium">{movement.user.name}</TableCell>
+      <TableCell className="text-muted-foreground">
+        {formattedCreatedAt}
+      </TableCell>
+      <TableCell className="text-muted-foreground">
+        {formattedHarvestDate}
+      </TableCell>
+      <TableCell className="text-muted-foreground">
+        {formattedHarvestedAt}
+      </TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

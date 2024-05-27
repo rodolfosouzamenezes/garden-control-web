@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
+import { useContextSelector } from 'use-context-selector'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -9,10 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { MovementsContext } from '@/contexts/MovementsContext'
 
 import { MovementTableRow } from './movement-table-row'
 
 export function Movements() {
+  const movements = useContextSelector(MovementsContext, (context) => {
+    return context.movements
+  })
+
   return (
     <>
       <Helmet title="Movimentações" />
@@ -41,8 +47,8 @@ export function Movements() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Array.from({ length: 10 }).map((_, i) => {
-                return <MovementTableRow key={i} />
+              {movements.map((movement, i) => {
+                return <MovementTableRow movement={movement} key={i} />
               })}
             </TableBody>
           </Table>
