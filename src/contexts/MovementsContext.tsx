@@ -63,27 +63,50 @@ export function MovementsProvider({ children }: MovementsProviderProps) {
       daysToHarvest,
       createdAt: new Date(),
     }
+
     const response = await api.post('movements', body)
 
     setMovements((state) => [response.data, ...state])
   }, [])
 
   const editMovement = useCallback(async (movement: Movement) => {
-    const response = await api.put(`movements/${movement.id}`, {
-      ...movement,
-      harvestedAt: new Date(movement.harvestedAt!),
-    })
+    await api
+      .put(`movements/${movement.id}`, {
+        ...movement,
+        harvestedAt: new Date(movement.harvestedAt!),
+      })
+      .then((res) => {
+        setMovements((state) => [
+          res.data,
+          ...state.filter((s) => s.id !== movement.id),
+        ])
+      })
+      .catch(() => {
+        const dateString = movement.harvestedAt!.split(',')[0]
+        const [day, month, year] = dateString.split('/').map(Number)
 
-    setMovements((state) => [
-      response.data,
-      ...state.filter((s) => s.id !== movement.id),
-    ])
+        const harvestedAt = new Date(year, month - 1, day)
+
+        const id = Math.random().toString()
+
+        setMovements((state) => [
+          ...state.map((s) => {
+            if (s.id !== movement.id) return s
+
+            return {
+              ...movement,
+              id,
+              harvestedAt: harvestedAt.toISOString(),
+            }
+          }),
+        ])
+      })
   }, [])
 
   const deleteMovement = useCallback(async (id: string) => {
-    await api.delete(`movements/${id}`)
-
     setMovements((state) => [...state.filter((s) => s.id !== id)])
+
+    await api.delete(`movements/${id}`)
   }, [])
 
   useEffect(() => {

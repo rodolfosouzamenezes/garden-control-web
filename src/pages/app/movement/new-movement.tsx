@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
+import { toast } from 'sonner'
 import { useContextSelector } from 'use-context-selector'
 
 import { Button } from '@/components/ui/button'
@@ -19,10 +20,16 @@ export function NewMovement() {
     return context.createMovement
   })
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
     createMovement({
       daysToHarvest,
       plant,
+    }).then(() => {
+      toast.success('Movimentação criada com sucesso!')
+      setDaysToHarvest(0)
+      setPlant('')
     })
   }
 
@@ -34,7 +41,11 @@ export function NewMovement() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label>Planta</Label>
-          <Input value={plant} onChange={(e) => setPlant(e.target.value)} />
+          <Input
+            value={plant}
+            onChange={(e) => setPlant(e.target.value)}
+            required
+          />
         </div>
         <div className="space-y-2">
           <Label>Dias para a colheita</Label>
@@ -42,6 +53,8 @@ export function NewMovement() {
             value={daysToHarvest}
             type="number"
             onChange={(e) => setDaysToHarvest(Number(e.target.value))}
+            required
+            min={1}
           />
         </div>
 
