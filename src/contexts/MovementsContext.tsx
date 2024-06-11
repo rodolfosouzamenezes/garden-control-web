@@ -83,9 +83,9 @@ export function MovementsProvider({ children }: MovementsProviderProps) {
       })
       .catch(() => {
         const dateString = movement.harvestedAt!.split(',')[0]
-        const [month, day, year] = dateString.split('/').map(Number)
+        const [day, month, year] = dateString.split('/').map(Number)
 
-        const harvestedAt = new Date(year, month - 1, day)
+        const harvestedAt = new Date(year, day, month - 1)
 
         const id = Math.random().toString()
 
