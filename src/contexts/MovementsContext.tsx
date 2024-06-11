@@ -57,7 +57,7 @@ export function MovementsProvider({ children }: MovementsProviderProps) {
     const body = {
       user: {
         id: '1',
-        name: 'Rodolfo Souza Menezeas',
+        name: 'Rodolfo Souza Menezes',
       },
       plant,
       daysToHarvest,
