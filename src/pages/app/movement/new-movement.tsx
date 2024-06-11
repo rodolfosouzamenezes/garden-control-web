@@ -36,7 +36,7 @@ export function NewMovement() {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Novo Motorista</DialogTitle>
+        <DialogTitle>Nova Movimentação</DialogTitle>
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
